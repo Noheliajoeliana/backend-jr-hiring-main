@@ -41,7 +41,7 @@ class Server {
     findOne(collection,id){
 
         if(id===null){
-            //If I receive an id=null then I return  NotFound Error
+            //If I receive an id=null then I return a NotFound Error
             return new NotFound('No data found with the id equal as "null".')
         }
 
@@ -73,9 +73,32 @@ class Server {
         }
     }
 
-    updteOne(){
+    updateOne(collection, id, update){
+        if(id===null){
+            //If I receive an id=null then I return a NotFound Error
+            return new NotFound('No data for update found with the id equal as "null".')
+        }
+
+        const queryDic = ['users','orgs','commits'];
+        
+        //First I make sure that the arguments are correct
+        if(!queryDic.includes(collection) || !id){
+            return new BadRequest()
+        }
+
+        try{
+            const item = this.findOne(collection,id)
+            for(let updating in update){
+                item[updating] = update[updating]
+            }
+    
+            return item
+        }catch(err){
+            return new ServerError(err)
+        }
 
     }
+    
 }
 
 module.exports = Server;
